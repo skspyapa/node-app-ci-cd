@@ -8,6 +8,10 @@ pipeline {
         NODE_ENV = 'test'
     }
 
+    triggers {
+        githubPush()
+    }
+
     parameters {
         string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Docker image tag')
     }
