@@ -50,12 +50,27 @@ pipeline {
             }
         }
 
+        stage('Debug Branch') {
+            steps {
+                echo "GIT_BRANCH: ${env.GIT_BRANCH}"
+                echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+                bat 'echo %GIT_BRANCH%'
+                bat 'git branch -a'
+                bat 'git rev-parse --abbrev-ref HEAD'
+            }
+        }
+
         stage('Push Docker Image') {
             when {
-                branch 'main'
+                expression { 
+                    env.GIT_BRANCH?.contains('main') || 
+                    env.BRANCH_NAME == 'main' || 
+                    env.GIT_BRANCH == 'main'
+                }
             }
             steps {
                 echo 'Pushing Docker image to registry...'
+                echo "Current branch: ${env.GIT_BRANCH}"
                 script {
                     bat 'docker login -u %DOCKER_REGISTRY_CREDENTIALS_USR% -p %DOCKER_REGISTRY_CREDENTIALS_PSW% %DOCKER_REGISTRY% && docker push %DOCKER_IMAGE%:%IMAGE_TAG% && docker push %DOCKER_IMAGE%:latest && docker logout'
                 }
