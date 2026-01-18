@@ -50,23 +50,9 @@ pipeline {
             }
         }
 
-        stage('Debug Branch') {
-            steps {
-                echo "GIT_BRANCH: ${env.GIT_BRANCH}"
-                echo "BRANCH_NAME: ${env.BRANCH_NAME}"
-                bat 'echo %GIT_BRANCH%'
-                bat 'git branch -a'
-                bat 'git rev-parse --abbrev-ref HEAD'
-            }
-        }
-
         stage('Push Docker Image') {
             when {
-                expression { 
-                    env.GIT_BRANCH?.contains('main') || 
-                    env.BRANCH_NAME == 'main' || 
-                    env.GIT_BRANCH == 'main'
-                }
+                expression { env.GIT_BRANCH == 'origin/main' }
             }
             steps {
                 echo 'Pushing Docker image to registry...'
