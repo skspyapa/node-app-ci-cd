@@ -23,7 +23,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing dependencies...'
-                sh '''
+                bat '''
                     node --version
                     npm --version
                     npm ci
@@ -34,8 +34,8 @@ pipeline {
         stage('Lint') {
             steps {
                 echo 'Running ESLint...'
-                sh '''
-                    npm run lint || true
+                bat '''
+                    npm run lint
                 '''
             }
         }
@@ -43,7 +43,7 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 echo 'Running unit tests...'
-                sh '''
+                bat '''
                     npm test -- --coverage --passWithNoTests
                 '''
             }
@@ -53,9 +53,9 @@ pipeline {
             steps {
                 echo 'Building Docker image...'
                 script {
-                    sh '''
-                        docker build -t ${DOCKER_IMAGE}:${IMAGE_TAG} .
-                        docker build -t ${DOCKER_IMAGE}:latest .
+                    bat '''
+                        docker build -t %DOCKER_IMAGE%:%IMAGE_TAG% .
+                        docker build -t %DOCKER_IMAGE%:latest .
                     '''
                 }
             }
@@ -68,10 +68,10 @@ pipeline {
             steps {
                 echo 'Pushing Docker image to registry...'
                 script {
-                    sh '''
-                        echo ${DOCKER_REGISTRY_CREDENTIALS_PSW} | docker login -u ${DOCKER_REGISTRY_CREDENTIALS_USR} --password-stdin ${DOCKER_REGISTRY}
-                        docker push ${DOCKER_IMAGE}:${IMAGE_TAG}
-                        docker push ${DOCKER_IMAGE}:latest
+                    bat '''
+                        @echo %DOCKER_REGISTRY_CREDENTIALS_PSW% | docker login -u %DOCKER_REGISTRY_CREDENTIALS_USR% --password-stdin %DOCKER_REGISTRY%
+                        docker push %DOCKER_IMAGE%:%IMAGE_TAG%
+                        docker push %DOCKER_IMAGE%:latest
                         docker logout
                     '''
                 }
@@ -81,8 +81,8 @@ pipeline {
         stage('Security Scan') {
             steps {
                 echo 'Running security scan on dependencies...'
-                sh '''
-                    npm audit --audit-level=moderate || true
+                bat '''
+                    npm audit --audit-level=moderate
                 '''
             }
         }
