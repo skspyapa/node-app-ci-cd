@@ -58,7 +58,15 @@ pipeline {
                 echo 'Pushing Docker image to registry...'
                 echo "Current branch: ${env.GIT_BRANCH}"
                 script {
-                    bat 'docker login -u %DOCKER_REGISTRY_CREDENTIALS_USR% -p %DOCKER_REGISTRY_CREDENTIALS_PSW% %DOCKER_REGISTRY% && docker push %DOCKER_IMAGE%:%IMAGE_TAG% && docker push %DOCKER_IMAGE%:latest && docker logout'
+                    // Use Jenkins credentials binding and pipe the password via stdin to avoid CLI warning
+                    withCredentials([usernamePassword(credentialsId: 'docker-registry-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // Use separate bat steps so failures are clearer in the logs
+                        bat 'echo Logging in to Docker registry...'
+                        bat 'echo %DOCKER_PASSWORD% | docker login --username %DOCKER_USERNAME% --password-stdin %DOCKER_REGISTRY%'
+                        bat 'docker push %DOCKER_IMAGE%:%IMAGE_TAG%'
+                        bat 'docker push %DOCKER_IMAGE%:latest'
+                        bat 'docker logout'
+                    }
                 }
             }
         }
