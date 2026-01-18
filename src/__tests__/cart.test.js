@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../../app');
+const app = require('../app');
 
 describe('Cart API', () => {
   describe('GET /api/cart/:userId', () => {
