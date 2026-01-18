@@ -1,0 +1,31 @@
+{
+  "name": "ecommerce-backend",
+  "version": "1.0.0",
+  "description": "Simple Node.js e-commerce backend with mocked REST APIs",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/**/*.js"
+  },
+  "keywords": ["ecommerce", "rest-api", "nodejs"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "uuid": "^9.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1",
+    "supertest": "^6.3.3",
+    "nodemon": "^2.0.20",
+    "eslint": "^8.33.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
